@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Text;
+using System.Globalization;
 
 namespace SAPCommon
 {
@@ -86,7 +87,7 @@ namespace SAPCommon
                 tfield = new TField("","");
                 if (rule.PostingType == postingtype)
                 {
-                    if (rule.RuleType == "" || rule.RuleType == null)
+                    if (String.IsNullOrEmpty(rule.RuleType))
                     {
                         // copy the value respecting #=""
                         if (basis.ContainsKey(rule.Source))
@@ -94,6 +95,20 @@ namespace SAPCommon
                             value = basis[rule.Source].Value;
                             if (value == "#" || value == null)
                                 value = "";
+                        }
+                        tfield = new TField(rule.Target, value);
+                    }
+                    else if (rule.RuleType == "R")
+                    {
+                        try
+                        {
+                            Double val = Convert.ToDouble(basis[rule.Source].Value, CultureInfo.CurrentCulture);
+                            val *= -1;
+                            value = val.ToString("F2", CultureInfo.CurrentCulture);
+                        }
+                        catch (System.Exception)
+                        {
+                            value = "";
                         }
                         tfield = new TField(rule.Target, value);
                     }
