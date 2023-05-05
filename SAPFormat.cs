@@ -31,6 +31,32 @@ namespace SAPCommon
             this.wbsMask = new TStr();
         }
 
+        public static string applyPattern(string val, string pattern)
+        {
+            char[] patternArray = pattern.ToCharArray();
+            char[] valArray = val.ToCharArray();
+            StringBuilder newValue = new StringBuilder();
+            for (int i = 0; i < valArray.Length; i++)
+            {
+                if (i < patternArray.Length)
+                {
+                    if (patternArray[i] == '+')
+                    {
+                        newValue.Append(valArray[i]);
+                    }
+                    else
+                    {
+                        newValue.Append(patternArray[i]);
+                    }
+                }
+                else
+                {
+                    newValue.Append(valArray[i]);
+                }
+            }
+            return newValue.ToString();
+        }
+
         public string dec(string val, int dec)
         {
             string aRet = "";

@@ -25,6 +25,21 @@ namespace SAPCommon
             set { MigRulesCollection migRulesCollection = value; }
         }
 
+        [ConfigurationProperty("mig_patterns", IsDefaultCollection = false)]
+        [ConfigurationCollection(typeof(MigPatternsCollection),
+        AddItemName = "add",
+        ClearItemsName = "clear",
+        RemoveItemName = "remove")]
+        public MigPatternsCollection MigPatterns
+        {
+            get
+            {
+                MigPatternsCollection migPatternsCollection = (MigPatternsCollection)base["mig_patterns"];
+                return migPatternsCollection;
+            }
+            set { MigPatternsCollection migPatternsCollection = value; }
+        }
+
         [ConfigurationProperty("mig_constants", IsDefaultCollection = false)]
         [ConfigurationCollection(typeof(MigConstantsCollection),
         AddItemName = "add",
@@ -369,6 +384,149 @@ namespace SAPCommon
             set { this["Value"] = value; }
         }
     }
+
+    public class MigPatternsCollection : ConfigurationElementCollection
+    {
+
+        public MigPatternsCollection()
+        {
+        }
+
+        public override ConfigurationElementCollectionType CollectionType
+        {
+            get
+            {
+                return ConfigurationElementCollectionType.AddRemoveClearMap;
+            }
+        }
+
+        protected override ConfigurationElement CreateNewElement()
+        {
+            return new MigPattern();
+        }
+
+        protected override Object GetElementKey(ConfigurationElement element)
+        {
+            return ((MigPattern)element).Key;
+        }
+
+        public MigPattern this[int index]
+        {
+            get
+            {
+                return (MigPattern)BaseGet(index);
+            }
+            set
+            {
+                if (BaseGet(index) != null)
+                {
+                    BaseRemoveAt(index);
+                }
+                BaseAdd(index, value);
+            }
+        }
+
+        new public MigPattern this[string Key]
+        {
+            get
+            {
+                return (MigPattern)BaseGet(Key);
+            }
+        }
+
+
+        public int IndexOf(MigPattern migPattern)
+        {
+            return BaseIndexOf(migPattern);
+        }
+
+        public void Add(MigPattern migPattern)
+        {
+            BaseAdd(migPattern);
+            // Your custom code goes here.
+        }
+
+        protected override void BaseAdd(ConfigurationElement element)
+        {
+            BaseAdd(element, false);
+            // Your custom code goes here.
+        }
+
+        public void Remove(MigPattern migPattern)
+        {
+            if (BaseIndexOf(migPattern) >= 0)
+            {
+                BaseRemove(migPattern.Key);
+                // Your custom code goes here.
+                Console.WriteLine("MigPatternsCollection: {0}", "Removed collection element!");
+            }
+        }
+
+        public void RemoveAt(int index)
+        {
+            BaseRemoveAt(index);
+            // Your custom code goes here.
+        }
+
+        public void Remove(string name)
+        {
+            BaseRemove(name);
+            // Your custom code goes here.
+        }
+
+        public void Clear()
+        {
+            BaseClear();
+            // Your custom code goes here.
+            Console.WriteLine("MigPatternsCollection: {0}", "Removed entire collection!");
+        }
+
+    }
+
+    public class MigPattern : System.Configuration.ConfigurationElement
+    {
+
+        public MigPattern(String postingType, string target, string value)
+        {
+            this.Key = postingType + "|" + target;
+            this.PostingType = postingType;
+            this.Target = target;
+            this.Value = value;
+        }
+
+        public MigPattern()
+        {
+        }
+
+        [ConfigurationProperty("Key", DefaultValue = "", IsRequired = true, IsKey = true)]
+        public string Key
+        {
+            get { return (string)this["Key"]; }
+            set { this["Key"] = value; }
+        }
+
+        [ConfigurationProperty("PostingType", DefaultValue = "", IsRequired = true, IsKey = false)]
+        public string PostingType
+        {
+            get { return (string)this["PostingType"]; }
+            set { this["PostingType"] = value; }
+        }
+
+        [ConfigurationProperty("Target", DefaultValue = "", IsRequired = true, IsKey = false)]
+        public string Target
+        {
+            get { return (string)this["Target"]; }
+            set { this["Target"] = value; }
+        }
+
+        [ConfigurationProperty("Value", DefaultValue = "", IsRequired = true, IsKey = false)]
+        public string Value
+        {
+            get { return (string)this["Value"]; }
+            set { this["Value"] = value; }
+        }
+    }
+
 
     public class MigFormulasCollection : ConfigurationElementCollection
     {

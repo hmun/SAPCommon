@@ -47,9 +47,14 @@ namespace SAPCommon
             }
         }
 
-        public IEnumerable<string> getArray(int partSize = 240)
+        public IEnumerable<string> getArray(int partSize = 240, int fullLength = 960)
         {
-            IEnumerable<string> aArray = Enumerable.Range(0, extString.Length / partSize).Select(i => extString.Substring(i * partSize, partSize));
+            string rest = "";
+            if (extString.Length < fullLength) {  
+                rest = new string(' ', fullLength - extString.Length);
+            }
+            string outStr = extString + rest;
+            IEnumerable<string> aArray = Enumerable.Range(0, outStr.Length / partSize).Select(i => outStr.Substring(i * partSize, partSize));
             return aArray;
         }
 

@@ -48,6 +48,11 @@ namespace SAPCommon
             mRS.MigRules.Add(new MigRule(postingType, target, ruleType, source));
         }
 
+        public void AddPattern(String postingType, string target, string value)
+        {
+            mRS.MigPatterns.Add(new MigPattern(postingType, target, value));
+        }
+
         public void AddConstant(String postingType, string target, string value)
         {
             mRS.MigConstants.Add(new MigConstant(postingType, target, value));
@@ -98,13 +103,17 @@ namespace SAPCommon
                         }
                         tfield = new TField(rule.Target, value);
                     }
-                    else if (rule.RuleType == "R")
+                    else if (rule.RuleType.Substring(0, 1) == "V" || rule.RuleType.Substring(0, 1) == "R")
                     {
                         try
                         {
+                            String decimals = rule.RuleType.Substring(1, rule.RuleType.Length - 1);
+                            if (String.IsNullOrEmpty(decimals))
+                                decimals = "2";
                             Double val = Convert.ToDouble(basis[rule.Source].Value, CultureInfo.CurrentCulture);
-                            val *= -1;
-                            value = val.ToString("F2", CultureInfo.CurrentCulture);
+                            if (rule.RuleType.Substring(0, 1) == "R")
+                                val *= -1;
+                            value = val.ToString("F" + decimals, CultureInfo.CurrentCulture);
                         }
                         catch (System.Exception)
                         {
@@ -140,10 +149,24 @@ namespace SAPCommon
                         value = mapper.Map(rule.Target, rule.Source, sourceval);
                         tfield = new TField(rule.Target, value, "S");
                     }
+                    else if (rule.RuleType == "P")
+                    {
+                        try
+                        {
+                            string pattern = MRS.MigPatterns[postingtype + "|" + rule.Target].Value;
+                            string sourceval = basis[rule.Source].Value ?? "";
+                            value = SAPFormat.applyPattern(sourceval, pattern);
+                            tfield = new TField(rule.Target, value, "S");
+                        }
+                        catch (System.Exception)
+                        {
+                            value = "";
+                        }
+                        tfield = new TField(rule.Target, value);
+                    }
                     col[tfield.Name] = tfield;
                 }
             }
-
             return col;
         }
     }

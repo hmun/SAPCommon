@@ -145,7 +145,7 @@ namespace SAPCommon
     {
         public SapConnectionConfigElement(String Name, string SystemID, string AppServerHost = "",  string SystemNumber = "",
             string MessageServerHost = "", string LogonGroup = "", string Trace = "", string Client = "", string Language = "", 
-            string SncMode = "0", string SncPartnerName = "", string SncMyName = "")
+            string SncMode = "0", string SncPartnerName = "", string SncMyName = "", string SAPRouter = "")
         {
             this.Name = Name;
             this.SystemID = SystemID;
@@ -159,6 +159,7 @@ namespace SAPCommon
             this.SncMode = SncMode;
             this.SncPartnerName = SncPartnerName;
             this.SncMyName = SncMyName;
+            this.SAPRouter = SAPRouter;
         }
 
         public SapConnectionConfigElement()
@@ -247,6 +248,13 @@ namespace SAPCommon
         {
             get { return (string)this["SncMyName"]; }
             set { this["SncMyName"] = value; }
+        }
+
+        [ConfigurationProperty("SAPRouter", DefaultValue = "", IsRequired = false, IsKey = false)]
+        public string SAPRouter
+        {
+            get { return (string)this["SAPRouter"]; }
+            set { this["SAPRouter"] = value; }
         }
     }
 }
