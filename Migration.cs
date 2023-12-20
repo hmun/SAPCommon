@@ -16,6 +16,7 @@ namespace SAPCommon
     {
         private MigRulesSection mRS;
         private Mapper mapper = null;
+        private CultureInfo cc = CultureInfo.CurrentCulture;
 
         public Migration(string configFile)
         {
@@ -98,7 +99,7 @@ namespace SAPCommon
                         if (basis.ContainsKey(rule.Source))
                         {
                             value = basis[rule.Source].Value;
-                            if (value == "#" || value == null)
+                            if (basis[rule.Source].Value == "#" || string.IsNullOrEmpty(basis[rule.Source].Value))
                                 value = "";
                         }
                         tfield = new TField(rule.Target, value);
@@ -107,13 +108,19 @@ namespace SAPCommon
                     {
                         try
                         {
+                            Double val;
                             String decimals = rule.RuleType.Substring(1, rule.RuleType.Length - 1);
-                            if (String.IsNullOrEmpty(decimals))
-                                decimals = "2";
-                            Double val = Convert.ToDouble(basis[rule.Source].Value, CultureInfo.CurrentCulture);
-                            if (rule.RuleType.Substring(0, 1) == "R")
-                                val *= -1;
-                            value = val.ToString("F" + decimals, CultureInfo.CurrentCulture);
+                            if (basis[rule.Source].Value == "#" || string.IsNullOrEmpty(basis[rule.Source].Value))
+                            {
+                                val = 0;
+                            } else { 
+                                if (String.IsNullOrEmpty(decimals))
+                                    decimals = "2";
+                                val = Convert.ToDouble(basis[rule.Source].Value, cc);
+                                if (rule.RuleType.Substring(0, 1) == "R")
+                                    val *= -1;
+                            }
+                            value = val.ToString("F" + decimals, cc);
                         }
                         catch (System.Exception)
                         {
