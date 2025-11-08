@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Globalization;
 using System.Linq;
+using System.Xml.Linq;
+using System.Xml;
+using System.IO;
 
 namespace SAPCommon
 {
@@ -11,6 +14,8 @@ namespace SAPCommon
     {
         private TExt extFields;
         private string extString;
+        private string project;
+
         public SapExtension(TStr intPar)
         {
             extString = new string(' ', 960);
@@ -25,6 +30,12 @@ namespace SAPCommon
                     }
                 }
             }
+        }
+
+        public string Project
+        {
+            get { return this.project; }
+            set { this.project = value; }
         }
 
         public void addField(TStrRec aStrRec)
@@ -62,7 +73,6 @@ namespace SAPCommon
         {
             return str.Remove(pos, Math.Min(len, str.Length - pos)).Insert(pos, replace);
         }
-
 
     }
 

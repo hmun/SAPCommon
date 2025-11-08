@@ -90,6 +90,12 @@ namespace SAPCommon
                             mig.AddPattern(Convert.ToString(aArray[i, j],cc), Convert.ToString(aArray[i, j + 1],cc), Convert.ToString(aArray[i, j + 4],cc));
                         if (Convert.ToString(aArray[i, j + 2],cc) == "F" & !string.IsNullOrEmpty(Convert.ToString(aArray[i, j + 4],cc)))
                             mig.AddFormula(Convert.ToString(aArray[i, j],cc), Convert.ToString(aArray[i, j + 1],cc), Convert.ToString(aArray[i, j + 4],cc));
+                        int u = aArray.GetUpperBound(1);
+                        if (u>=j+5)
+                        { 
+                            if (!string.IsNullOrEmpty(Convert.ToString(aArray[i, j + 5], cc)))
+                                mig.AddStyle(Convert.ToString(aArray[i, j], cc), Convert.ToString(aArray[i, j + 1], cc), Convert.ToString(aArray[i, j + 5], cc));
+                        }
                     }
                 }
                 catch (Exception Exc)

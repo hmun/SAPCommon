@@ -69,6 +69,22 @@ namespace SAPCommon
             mRS.MigMappings.Add(new MigMapping(source, target, sourcevalue, targetvalue));
         }
 
+        public void AddStyle(String postingType, string target, string value)
+        {
+            mRS.MigStyles.Add(new MigStyle(postingType, target, value));
+        }
+
+        public Dictionary<string, string> TargetStyles()
+        {
+            Dictionary<string, string> styles = new Dictionary<string, string>();
+            foreach (MigStyle style in mRS.MigStyles)
+            {
+                if (!styles.ContainsKey(style.Target))
+                    styles[style.Target] = style.Value;
+            }
+            return styles;
+        }
+
         public Boolean ContainsSource(string postingtype, string source)
         {
             foreach (MigRule rule in mRS.MigRules)
@@ -78,6 +94,7 @@ namespace SAPCommon
             }
             return false;             
         }
+
         public Dictionary<string, TField> ApplyRules(Dictionary<string, TField> basis, string postingtype)
         {
             string value;

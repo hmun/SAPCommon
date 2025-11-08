@@ -64,6 +64,21 @@ namespace SAPCommon
             set { MigFormulasCollection migFormulasCollection = value; }
         }
 
+        [ConfigurationProperty("mig_styles", IsDefaultCollection = false)]
+        [ConfigurationCollection(typeof(MigStylesCollection),
+        AddItemName = "add",
+        ClearItemsName = "clear",
+        RemoveItemName = "remove")]
+        public MigStylesCollection MigStyles
+        {
+            get
+            {
+                MigStylesCollection migStylesCollection = (MigStylesCollection)base["mig_styles"];
+                return migStylesCollection;
+            }
+            set { MigStylesCollection migStylesCollection = value; }
+        }
+
         [ConfigurationProperty("mig_mappings", IsDefaultCollection = false)]
         [ConfigurationCollection(typeof(MigMappingsCollection),
         AddItemName = "add",
@@ -817,6 +832,148 @@ namespace SAPCommon
         {
             get { return (string)this["TargetValue"]; }
             set { this["TargetValue"] = value; }
+        }
+    }
+
+    public class MigStylesCollection : ConfigurationElementCollection
+    {
+
+        public MigStylesCollection()
+        {
+        }
+
+        public override ConfigurationElementCollectionType CollectionType
+        {
+            get
+            {
+                return ConfigurationElementCollectionType.AddRemoveClearMap;
+            }
+        }
+
+        protected override ConfigurationElement CreateNewElement()
+        {
+            return new MigStyle();
+        }
+
+        protected override Object GetElementKey(ConfigurationElement element)
+        {
+            return ((MigStyle)element).Key;
+        }
+
+        public MigStyle this[int index]
+        {
+            get
+            {
+                return (MigStyle)BaseGet(index);
+            }
+            set
+            {
+                if (BaseGet(index) != null)
+                {
+                    BaseRemoveAt(index);
+                }
+                BaseAdd(index, value);
+            }
+        }
+
+        new public MigStyle this[string Key]
+        {
+            get
+            {
+                return (MigStyle)BaseGet(Key);
+            }
+        }
+
+
+        public int IndexOf(MigStyle migStyle)
+        {
+            return BaseIndexOf(migStyle);
+        }
+
+        public void Add(MigStyle migStyle)
+        {
+            BaseAdd(migStyle);
+            // Your custom code goes here.
+        }
+
+        protected override void BaseAdd(ConfigurationElement element)
+        {
+            BaseAdd(element, false);
+            // Your custom code goes here.
+        }
+
+        public void Remove(MigStyle migStyle)
+        {
+            if (BaseIndexOf(migStyle) >= 0)
+            {
+                BaseRemove(migStyle.Key);
+                // Your custom code goes here.
+                Console.WriteLine("MigStylesCollection: {0}", "Removed collection element!");
+            }
+        }
+
+        public void RemoveAt(int index)
+        {
+            BaseRemoveAt(index);
+            // Your custom code goes here.
+        }
+
+        public void Remove(string name)
+        {
+            BaseRemove(name);
+            // Your custom code goes here.
+        }
+
+        public void Clear()
+        {
+            BaseClear();
+            // Your custom code goes here.
+            Console.WriteLine("MigStylesCollection: {0}", "Removed entire collection!");
+        }
+
+    }
+
+    public class MigStyle : System.Configuration.ConfigurationElement
+    {
+
+        public MigStyle(String postingType, string target, string value)
+        {
+            this.Key = postingType + "|" + target;
+            this.PostingType = postingType;
+            this.Target = target;
+            this.Value = value;
+        }
+
+        public MigStyle()
+        {
+        }
+
+        [ConfigurationProperty("Key", DefaultValue = "", IsRequired = true, IsKey = true)]
+        public string Key
+        {
+            get { return (string)this["Key"]; }
+            set { this["Key"] = value; }
+        }
+
+        [ConfigurationProperty("PostingType", DefaultValue = "", IsRequired = true, IsKey = false)]
+        public string PostingType
+        {
+            get { return (string)this["PostingType"]; }
+            set { this["PostingType"] = value; }
+        }
+
+        [ConfigurationProperty("Target", DefaultValue = "", IsRequired = true, IsKey = false)]
+        public string Target
+        {
+            get { return (string)this["Target"]; }
+            set { this["Target"] = value; }
+        }
+
+        [ConfigurationProperty("Value", DefaultValue = "", IsRequired = true, IsKey = false)]
+        public string Value
+        {
+            get { return (string)this["Value"]; }
+            set { this["Value"] = value; }
         }
     }
 
